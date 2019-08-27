@@ -1,4 +1,21 @@
+# Libraries import
 import sys
+import nltk
+nltk.download(['punkt', 'wordnet'])
+import re
+import pandas as pd
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+from sqlalchemy import create_engine
+from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.multioutput import MultiOutputClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+from sklearn.model_selection import GridSearchCV
+from sklearn.decomposition import PCA
+from sklearn.svm import SVC
 
 
 def load_data(messages_filepath, categories_filepath):
@@ -44,6 +61,7 @@ def save_data(df, database_filepath):
     df.to_sql(tablename, engine, index=False)
 
 
+    
 def main():
     if len(sys.argv) == 4:
 
