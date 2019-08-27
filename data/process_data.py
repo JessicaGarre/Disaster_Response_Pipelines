@@ -18,6 +18,7 @@ from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 
 
+# Function to load both input csv datasets, messages and categories
 def load_data(messages_filepath, categories_filepath):
     # Load messages and categories files
     messages = pd.read_csv(messages_filepath)
@@ -29,7 +30,9 @@ def load_data(messages_filepath, categories_filepath):
     return df
    
 
+# Function to clean the data
 def clean_data(df):
+    
     # Split 'categories' into separate category columns
     categories = df['categories'].str.split(';', 0, expand=True)
 
@@ -38,12 +41,12 @@ def clean_data(df):
     category_colnames = row.apply(lambda x: x[:-2])
     categories.columns = category_colnames
 
-    # Convert category values to just numbers 0 or 1.
+    # Convert category values to just numbers 0 or 1
     for column in categories:
         categories[column] = categories[column].apply(lambda x: x[-1])
         categories[column] = categories[column].apply(lambda x: int(x))
 
-    # Replace 'categories' column in 'df' with new category columns.
+    # Replace 'categories' column in 'df' with new category columns
     df.drop('categories', axis=1, inplace=True)
     categories['id'] = df['id']
     df = df.merge(categories, on='id')
@@ -54,8 +57,10 @@ def clean_data(df):
     return df 
 
 
+# Saving the data into a SQLite database
 def save_data(df, database_filepath):
-    #Save the clean dataset into an sqlite database.
+    
+    #Save the clean dataset into an sqlite database
     table_name = 'disasters_table'
     engine = create_engine('sqlite:///{}'.format(database_filepath))
     df.to_sql(tablename, engine, index=False)
