@@ -10,8 +10,7 @@ def load_data(messages_filepath, categories_filepath):
     df = messages.merge(categories, on='id', how='outer')
     
     return df
-    
-
+   
 
 def clean_data(df):
     # Split 'categories' into separate category columns
@@ -43,7 +42,6 @@ def save_data(df, database_filepath):
     table_name = 'disasters_table'
     engine = create_engine('sqlite:///{}'.format(database_filepath))
     df.to_sql(tablename, engine, index=False)
-
 
 
 def main():
