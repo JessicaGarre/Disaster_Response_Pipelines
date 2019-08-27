@@ -18,19 +18,20 @@ from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 
 
-# Loading the data
+# Loading the data from the SQLite dataset previously created 
 def load_data(database_filepath):
+    
     table_name = 'disasters_table'
     engine = create_engine('sqlite:///{}'.format(database_filepath))
     df = pd.read_sql_table(table_name, con=engine)
     
-    X = df['message']  
-    Y = df.drop(['id', 'message', 'original', 'genre'], axis = 1)
+    X = df['message']  # Input variables
+    Y = df.drop(['id', 'message', 'original', 'genre'], axis = 1)  # Targets (multiple outputs)
     
     return X, Y
 
 
-# Tokenizing messages 
+# Tokenizing the messages in order to obtain separate words and clean to obtain them in the same format
 def tokenize(text):
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
@@ -43,12 +44,15 @@ def tokenize(text):
     return clean_tokens
 
 
-# Build the model
+# Build the ML model
 def build_model():
+    
+    # Pipeline building
     pipeline = Pipeline([('vect', CountVectorizer()),
                          ('tfidf', TfidfTransformer()),
                          ('clf', MultiOutputClassifier(RandomForestClassifier()))])
     
+    # Parameters for the Grid Search
     parameters = {'tfidf__use_idf': (True, False), 
                   'clf__estimator__n_estimators': [50, 100], 
                   'clf__estimator__min_samples_split': [2, 3]} 
@@ -58,8 +62,9 @@ def build_model():
     return cv
 
 
-# Evaluate the model
+# Evaluation of the model
 def evaluate_model(model, X_test, Y_test, category_names):
+    
     y_pred = model.predict(X_test)
     
     for i, column in enumerate(Y_test):
